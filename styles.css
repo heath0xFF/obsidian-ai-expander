@@ -1,0 +1,89 @@
+.ai-expander-modal {
+  min-width: 520px;
+  max-width: 720px;
+}
+
+.ai-expander-modal h2 {
+  margin-top: 0;
+}
+
+.ai-expander-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.ai-expander-field label {
+  font-size: 0.85em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ai-expander-selection {
+  font-family: var(--font-monospace);
+  font-size: 0.85em;
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  padding: 8px;
+  max-height: 160px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  width: 100%;
+  resize: vertical;
+}
+
+.ai-expander-prompt {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+}
+
+.ai-expander-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ai-expander-row .ai-expander-provider {
+  flex: 1;
+}
+
+.ai-expander-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.ai-expander-output {
+  font-family: var(--font-text);
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  padding: 12px;
+  min-height: 160px;
+  max-height: 360px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.ai-expander-status {
+  font-size: 0.85em;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.ai-expander-error {
+  color: var(--text-error);
+  background: var(--background-modifier-error);
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 8px;
+  white-space: pre-wrap;
+  font-family: var(--font-monospace);
+  font-size: 0.85em;
+}
