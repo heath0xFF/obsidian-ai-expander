@@ -1,0 +1,5 @@
+omlx requires an api key.
+
+---
+
+ok nice. this is automatic now with the symlink right?
