@@ -1,0 +1,21 @@
+i switched to using oMLX instead of ollama. update the code for this plugin to use localhost:42069/v1 for the api base url. it's basically the same api endpoints as ollama, just a different base url
+
+---
+
+just go search omlx and tell me what you find
+
+---
+
+i configured it to port 42069. go ahead and fix what needs to be fixed
+
+---
+
+swap to omlx.
+
+---
+
+ok so everything is updated?
+
+---
+
+yeah run build
