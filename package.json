@@ -7,7 +7,7 @@
     "dev": "node esbuild.config.mjs",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
   },
-  "keywords": ["obsidian", "plugin", "ai", "ollama", "claude", "openrouter"],
+  "keywords": ["obsidian", "plugin", "ai", "omlx", "claude", "openrouter"],
   "author": "Heath",
   "license": "MIT",
   "devDependencies": {

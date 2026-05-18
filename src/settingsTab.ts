@@ -1,6 +1,6 @@
 import { App, DropdownComponent, Notice, PluginSettingTab, Setting } from "obsidian";
 import type AIExpanderPlugin from "./main";
-import { OllamaProvider } from "./providers/ollama";
+import { OmlxProvider } from "./providers/omlx";
 import { OpenRouterProvider } from "./providers/openrouter";
 
 export class AIExpanderSettingTab extends PluginSettingTab {
@@ -20,13 +20,13 @@ export class AIExpanderSettingTab extends PluginSettingTab {
       .setDesc("Which backend to use by default. You can override per-expansion in the modal.")
       .addDropdown((dd) =>
         dd
-          .addOption("ollama", "Ollama (local)")
+          .addOption("omlx", "oMLX (local)")
           .addOption("openrouter", "OpenRouter")
           .addOption("claude-cli", "Claude CLI")
           .setValue(this.plugin.settings.defaultProvider)
           .onChange(async (value) => {
             this.plugin.settings.defaultProvider = value as
-              | "ollama"
+              | "omlx"
               | "openrouter"
               | "claude-cli";
             await this.plugin.saveSettings();
@@ -59,77 +59,92 @@ export class AIExpanderSettingTab extends PluginSettingTab {
         t.inputEl.style.width = "100%";
       });
 
-    containerEl.createEl("h3", { text: "Ollama" });
+    containerEl.createEl("h3", { text: "oMLX" });
 
     new Setting(containerEl)
       .setName("Base URL")
-      .setDesc("Where your local Ollama server is listening.")
+      .setDesc("Where your local oMLX server is listening. Include the /v1 prefix.")
       .addText((t) =>
         t
-          .setPlaceholder("http://localhost:11434")
-          .setValue(this.plugin.settings.ollama.baseUrl)
+          .setPlaceholder("http://localhost:42069/v1")
+          .setValue(this.plugin.settings.omlx.baseUrl)
           .onChange(async (value) => {
-            this.plugin.settings.ollama.baseUrl = value.trim() || "http://localhost:11434";
+            this.plugin.settings.omlx.baseUrl = value.trim() || "http://localhost:42069/v1";
             await this.plugin.saveSettings();
           })
       );
 
-    let ollamaDropdown: DropdownComponent | null = null;
+    new Setting(containerEl)
+      .setName("API key")
+      .setDesc(
+        "Sent as a Bearer token. Required by some oMLX deployments; leave blank for an unauthenticated local server."
+      )
+      .addText((t) => {
+        t.inputEl.type = "password";
+        t.setPlaceholder("optional")
+          .setValue(this.plugin.settings.omlx.apiKey)
+          .onChange(async (value) => {
+            this.plugin.settings.omlx.apiKey = value.trim();
+            await this.plugin.saveSettings();
+          });
+      });
 
-    const populateOllama = (models: string[]) => {
-      if (!ollamaDropdown) return;
-      const current = this.plugin.settings.ollama.model;
-      ollamaDropdown.selectEl.empty();
+    let omlxDropdown: DropdownComponent | null = null;
+
+    const populateOmlx = (models: string[]) => {
+      if (!omlxDropdown) return;
+      const current = this.plugin.settings.omlx.model;
+      omlxDropdown.selectEl.empty();
       for (const m of models) {
-        const opt = ollamaDropdown.selectEl.createEl("option");
+        const opt = omlxDropdown.selectEl.createEl("option");
         opt.value = m;
         opt.text = m;
       }
       if (current && !models.includes(current)) {
-        const opt = ollamaDropdown.selectEl.createEl("option");
+        const opt = omlxDropdown.selectEl.createEl("option");
         opt.value = current;
-        opt.text = `${current} (not installed)`;
+        opt.text = `${current} (not loaded)`;
       }
       if (!current && models.length) {
-        this.plugin.settings.ollama.model = models[0];
+        this.plugin.settings.omlx.model = models[0];
         void this.plugin.saveSettings();
       }
-      ollamaDropdown.setValue(this.plugin.settings.ollama.model);
+      omlxDropdown.setValue(this.plugin.settings.omlx.model);
     };
 
-    const refreshOllama = async (showNotice: boolean) => {
+    const refreshOmlx = async (showNotice: boolean) => {
       try {
-        const provider = new OllamaProvider(this.plugin.settings.ollama);
+        const provider = new OmlxProvider(this.plugin.settings.omlx);
         const models = await provider.listModels();
-        populateOllama(models);
-        if (showNotice) new Notice(`Found ${models.length} Ollama models`);
+        populateOmlx(models);
+        if (showNotice) new Notice(`Found ${models.length} oMLX models`);
       } catch (err) {
-        if (showNotice) new Notice(`Ollama: ${(err as Error).message}`);
+        if (showNotice) new Notice(`oMLX: ${(err as Error).message}`);
       }
     };
 
     new Setting(containerEl)
       .setName("Model")
       .setDesc(
-        "Select a model you have pulled. Click Refresh after starting Ollama or pulling a new model."
+        "Select a model. Click Refresh after starting oMLX or downloading a new model."
       )
       .addDropdown((dd) => {
-        ollamaDropdown = dd;
-        const current = this.plugin.settings.ollama.model;
+        omlxDropdown = dd;
+        const current = this.plugin.settings.omlx.model;
         if (current) {
           dd.addOption(current, current);
           dd.setValue(current);
         }
         dd.onChange(async (value) => {
-          this.plugin.settings.ollama.model = value;
+          this.plugin.settings.omlx.model = value;
           await this.plugin.saveSettings();
         });
       })
       .addButton((btn) =>
-        btn.setButtonText("Refresh").onClick(() => refreshOllama(true))
+        btn.setButtonText("Refresh").onClick(() => refreshOmlx(true))
       );
 
-    void refreshOllama(false);
+    void refreshOmlx(false);
 
     containerEl.createEl("h3", { text: "OpenRouter" });
 

@@ -3,7 +3,7 @@
   "name": "AI Expander",
   "version": "0.1.0",
   "minAppVersion": "1.4.0",
-  "description": "Highlight text and have AI expand on it. Local-first (Ollama) with optional OpenRouter and Claude CLI providers.",
+  "description": "Highlight text and have AI expand on it. Local-first (oMLX) with optional OpenRouter and Claude CLI providers.",
   "author": "Heath",
   "isDesktopOnly": true
 }

@@ -2,7 +2,7 @@
 
 Highlight text in a note, run **AI Expander: Expand selection with AI** from the command palette, type a prompt, and watch an LLM stream an expansion into a preview. Accept to insert it; reject to discard.
 
-Local-first by default (Ollama). Optional providers: OpenRouter (any model, BYO API key) and the `claude` CLI (reuses your existing Claude Code login).
+Local-first by default (oMLX). Optional providers: OpenRouter (any model, BYO API key) and the `claude` CLI (reuses your existing Claude Code login).
 
 ## Install (development)
 
@@ -33,24 +33,11 @@ No default hotkey is registered — bind one in Obsidian's hotkey settings if yo
 
 ## Providers
 
-### Ollama (default, local)
+### oMLX (default, local)
 
-Requires a running Ollama server and at least one pulled model:
+Requires a running [oMLX](https://omlx.ai/) server (OpenAI-compatible, Apple Silicon) with at least one model downloaded. Start it from the menu-bar app or its CLI; the plugin defaults to `http://localhost:42069/v1` — set the **Base URL** in settings to match your configured port (include the `/v1` prefix).
 
-```sh
-ollama serve
-ollama pull llama3.1
-```
-
-If the plugin can't reach Ollama from Obsidian's renderer due to CORS, restart the server with the Obsidian origin allowed:
-
-```sh
-OLLAMA_ORIGINS='app://obsidian.md' ollama serve
-```
-
-(Or set `OLLAMA_ORIGINS=*` for permissive local development.)
-
-In settings, click **Refresh models** to populate the autocomplete dropdown from your local install.
+In settings, click **Refresh models** to populate the model dropdown from the running server (`GET /v1/models`).
 
 ### OpenRouter
 

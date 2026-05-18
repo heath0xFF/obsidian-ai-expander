@@ -55,15 +55,29 @@ export default class AIExpanderPlugin extends Plugin {
   }
 }
 
+// Older versions stored an Ollama-shaped block under `ollama` and used the
+// "ollama" provider id. oMLX speaks a different (OpenAI-compatible) API on a
+// different URL, so the old baseUrl/model are not reusable — only the
+// provider-selection intent is migrated; the rest falls back to oMLX defaults.
+type LegacySettings = Omit<Partial<AIExpanderSettings>, "defaultProvider"> & {
+  defaultProvider?: AIExpanderSettings["defaultProvider"] | "ollama";
+  ollama?: { baseUrl?: string; model?: string };
+};
+
 function mergeSettings(
   base: AIExpanderSettings,
-  patch: Partial<AIExpanderSettings>
+  rawPatch: Partial<AIExpanderSettings>
 ): AIExpanderSettings {
+  const patch = rawPatch as LegacySettings;
+  const defaultProvider =
+    patch.defaultProvider === "ollama"
+      ? "omlx"
+      : patch.defaultProvider ?? base.defaultProvider;
   return {
-    defaultProvider: patch.defaultProvider ?? base.defaultProvider,
+    defaultProvider,
     acceptBehavior: patch.acceptBehavior ?? base.acceptBehavior,
     systemPrompt: patch.systemPrompt ?? base.systemPrompt,
-    ollama: { ...base.ollama, ...(patch.ollama ?? {}) },
+    omlx: { ...base.omlx, ...(patch.omlx ?? {}) },
     openrouter: { ...base.openrouter, ...(patch.openrouter ?? {}) },
     claudeCli: { ...base.claudeCli, ...(patch.claudeCli ?? {}) },
   };

@@ -1,7 +1,7 @@
 import { App, Modal, Notice, Setting } from "obsidian";
 import type { AIExpanderSettings, ProviderId } from "./settings";
 import type { AIProvider } from "./providers/types";
-import { OllamaProvider } from "./providers/ollama";
+import { OmlxProvider } from "./providers/omlx";
 import { OpenRouterProvider } from "./providers/openrouter";
 import { ClaudeCliProvider } from "./providers/claudeCli";
 
@@ -82,7 +82,7 @@ export class ExpandModal extends Modal {
     row.createEl("label", { text: "Provider:" });
     const providerSel = row.createEl("select", { cls: "ai-expander-provider" });
     for (const opt of [
-      { v: "ollama", t: "Ollama (local)" },
+      { v: "omlx", t: "oMLX (local)" },
       { v: "openrouter", t: "OpenRouter" },
       { v: "claude-cli", t: "Claude CLI" },
     ] as const) {
@@ -204,8 +204,8 @@ export class ExpandModal extends Modal {
 
   private makeProvider(): AIProvider {
     switch (this.provider) {
-      case "ollama":
-        return new OllamaProvider(this.settings.ollama);
+      case "omlx":
+        return new OmlxProvider(this.settings.omlx);
       case "openrouter":
         return new OpenRouterProvider(this.settings.openrouter);
       case "claude-cli":
@@ -215,8 +215,8 @@ export class ExpandModal extends Modal {
 
   private providerLabel(): string {
     switch (this.provider) {
-      case "ollama":
-        return `Ollama (${this.settings.ollama.model})`;
+      case "omlx":
+        return `oMLX (${this.settings.omlx.model})`;
       case "openrouter":
         return `OpenRouter (${this.settings.openrouter.model})`;
       case "claude-cli":

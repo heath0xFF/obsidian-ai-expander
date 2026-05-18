@@ -1,4 +1,4 @@
-export type ProviderId = "ollama" | "openrouter" | "claude-cli";
+export type ProviderId = "omlx" | "openrouter" | "claude-cli";
 
 export type AcceptBehavior = "replace" | "append";
 
@@ -6,8 +6,9 @@ export interface AIExpanderSettings {
   defaultProvider: ProviderId;
   acceptBehavior: AcceptBehavior;
   systemPrompt: string;
-  ollama: {
+  omlx: {
     baseUrl: string;
+    apiKey: string;
     model: string;
   };
   openrouter: {
@@ -26,12 +27,13 @@ export const DEFAULT_SYSTEM_PROMPT =
   "Output only the expanded passage — no preamble, no explanation, no surrounding quotes.";
 
 export const DEFAULT_SETTINGS: AIExpanderSettings = {
-  defaultProvider: "ollama",
+  defaultProvider: "omlx",
   acceptBehavior: "replace",
   systemPrompt: DEFAULT_SYSTEM_PROMPT,
-  ollama: {
-    baseUrl: "http://localhost:11434",
-    model: "llama3.1",
+  omlx: {
+    baseUrl: "http://localhost:42069/v1",
+    apiKey: "",
+    model: "",
   },
   openrouter: {
     apiKey: "",
