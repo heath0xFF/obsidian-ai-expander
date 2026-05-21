@@ -13,14 +13,8 @@ export default class AIExpanderPlugin extends Plugin {
       id: "expand-selection",
       name: "Expand selection with AI",
       editorCallback: (editor: Editor) => {
-        const raw = editor.getSelection();
-        let selection = typeof raw === "string" ? raw : "";
+        const selection = editor.getSelection();
         if (!selection) {
-          const domSel = window.getSelection()?.toString() ?? "";
-          if (domSel) selection = domSel;
-        }
-        if (!selection) {
-          console.warn("[ai-expander] empty selection. editor.getSelection() returned:", raw);
           new Notice("Select some text first");
           return;
         }

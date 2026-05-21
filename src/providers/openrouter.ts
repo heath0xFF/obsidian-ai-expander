@@ -50,11 +50,11 @@ export class OpenRouterProvider implements AIProvider {
       const { done, value } = await reader.read();
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
-      let sepIdx: number;
-      while ((sepIdx = buffer.indexOf("\n\n")) !== -1) {
-        const event = buffer.slice(0, sepIdx);
-        buffer = buffer.slice(sepIdx + 2);
-        const piece = parseSseEvent(event);
+      while (true) {
+        const next = popNextSseEvent(buffer);
+        if (!next) break;
+        buffer = next.remaining;
+        const piece = parseSseEvent(next.event);
         if (piece === DONE) return full;
         if (piece) {
           full += piece;
@@ -79,6 +79,19 @@ export class OpenRouterProvider implements AIProvider {
 }
 
 const DONE = Symbol("done");
+
+function popNextSseEvent(
+  buffer: string
+): { event: string; remaining: string } | null {
+  const match = /\r?\n\r?\n/.exec(buffer);
+  if (!match || match.index == null) return null;
+  const sepIdx = match.index;
+  const sepLen = match[0].length;
+  return {
+    event: buffer.slice(0, sepIdx),
+    remaining: buffer.slice(sepIdx + sepLen),
+  };
+}
 
 function parseSseEvent(event: string): string | typeof DONE | null {
   let acc = "";
