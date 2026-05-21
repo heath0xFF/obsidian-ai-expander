@@ -4,6 +4,12 @@ Highlight text in a note, run **AI Expander: Expand selection with AI** from the
 
 Local-first by default (oMLX). Optional providers: OpenRouter (any model, BYO API key) and the `claude` CLI (reuses your existing Claude Code login).
 
+## Prerequisites
+
+- **oMLX**: Requires a running [oMLX](https://omlx.ai/) server (OpenAI-compatible, Apple Silicon).
+- **Claude CLI**: Requires the `claude` CLI (Claude Code) installed and authenticated on your system.
+- **Environment**: This plugin is designed for desktop use.
+
 ## Install (development)
 
 ```sh
@@ -25,17 +31,19 @@ For iterative development, `npm run dev` runs esbuild in watch mode; reload Obsi
 
 1. Highlight a passage in any note.
 2. Open the command palette and run **AI Expander: Expand selection with AI**.
-3. Enter a directive (e.g. "Expand this into a longer paragraph with more concrete examples"). Optionally switch the provider for this invocation.
+3. Enter a directive (e.g. "Expand this into a longer paragraph with more concrete examples"). You can also switch the provider for this specific invocation using the dropdown in the modal.
 4. Press **Expand** (or Cmd/Ctrl-Enter). Tokens stream into the preview.
 5. **Accept** replaces (or appends, per settings) your selection with the expansion. **Reject** discards it. **Stop** mid-stream cancels the request.
 
-No default hotkey is registered — bind one in Obsidian's hotkey settings if you want.
+*Tip: No default hotkey is registered — bind one in Obsidian's hotkey settings for faster access.*
 
 ## Providers
 
 ### oMLX (default, local)
 
-Requires a running [oMLX](https://omlx.ai/) server (OpenAI-compatible, Apple Silicon) with at least one model downloaded. Start it from the menu-bar app or its CLI; the plugin defaults to `http://localhost:42069/v1` — set the **Base URL** in settings to match your configured port (include the `/v1` prefix).
+Requires a running [oMLX](https://omlx.ai/) server (OpenAI-compatible, Apple Silicon) with at least one model downloaded. Start it from the menu-bar app or its CLI. 
+
+The plugin defaults to `http://localhost:42069/v1` (this is a plugin-specific default; check your oMLX settings for the correct port). Set the **Base URL** in settings to match your configured port (ensure you include the `/v1` prefix).
 
 In settings, click **Refresh models** to populate the model dropdown from the running server (`GET /v1/models`).
 
@@ -45,17 +53,23 @@ Paste your API key in settings, then click **Refresh models** to pull the live c
 
 ### Claude CLI
 
-Uses your existing Claude Code login — no API key needed. Make sure `claude` is on your PATH (or set an absolute path in settings) and you've signed in once interactively. The plugin runs `claude -p --append-system-prompt <system> [--model <model>]` and pipes the directive + selection over stdin.
+Uses your existing Claude Code login — no API key needed. Ensure `claude` is in your system `PATH` or provide the absolute path in settings. The plugin runs `claude -p --append-system-prompt <system> [--model <model>]` and pipes the directive + selection over stdin.
 
 ## Settings
 
-- **Default provider** — which backend the modal picks initially. Override per-invocation in the modal.
+- **Default provider** — which backend the modal picks initially.
 - **Accept behavior** — `replace` swaps the selection for the expansion; `append` keeps the original and adds the expansion after it (separated by a blank line).
 - **System prompt** — sent to every provider. Edit to change tone or output format.
 - Per-provider: base URL / API key / binary path, plus model selector.
 
+## Troubleshooting
+
+- **oMLX connection failed**: Ensure the oMLX server is running and the **Base URL** in settings matches your port (e.g., `http://localhost:42069/v1`).
+- **Claude CLI errors**: Verify the binary path in settings is correct and that you can run `claude` from your terminal.
+- **Empty expansion**: If the model returns nothing, check your prompt or try a different model/provider.
+
 ## Limitations
 
-- Desktop only (`isDesktopOnly: true`) — the Claude CLI provider needs Node's `child_process`, and streaming `fetch` to `localhost` requires Electron.
-- Single-shot only: no multi-turn chat in the modal.
-- No persistent history — each expansion is independent.
+- **Desktop only** (`isDesktopOnly: true`) — the Claude CLI provider needs Node's `child_process`, and streaming `fetch` to `localhost` requires Electron.
+- **Single-shot only**: Designed for one-off expansions rather than multi-turn chat.
+- **No persistent history**: Each expansion is independent and not saved in a chat history.
